@@ -33,6 +33,10 @@ spec:
     2. Let GitHub Actions publish the image to GHCR.
     3. Deploy this template after the first successful image build.
 
+    The template pulls through the Huawei Cloud accelerated mirror of GHCR:
+
+    - `swr.cn-north-4.myhuaweicloud.com/ddn-k8s/ghcr.io/azul-vintage/vintage-elasticsearch-zeabur:latest`
+
     ## Default Runtime Settings
 
     This template uses Elasticsearch's official Docker-safe env naming:
@@ -62,7 +66,7 @@ spec:
       spec:
         id: elasticsearch
         source:
-          image: ghcr.io/azul-vintage/vintage-elasticsearch-zeabur:latest
+          image: swr.cn-north-4.myhuaweicloud.com/ddn-k8s/ghcr.io/azul-vintage/vintage-elasticsearch-zeabur:latest
           runAsUserID: 1000
         ports:
           - id: http

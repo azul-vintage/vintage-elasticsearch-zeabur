@@ -22,6 +22,15 @@ On version tags such as `v9.3.3`, the workflow also publishes:
 After the first publish, set the GHCR package visibility to `Public` if you
 want Zeabur to pull it without extra credentials.
 
+## Zeabur Pull Source
+
+The Zeabur template is configured to pull through the Huawei Cloud accelerator:
+
+- `swr.cn-north-4.myhuaweicloud.com/ddn-k8s/ghcr.io/azul-vintage/vintage-elasticsearch-zeabur:latest`
+
+This keeps the build pipeline on GHCR while giving Zeabur a faster pull source
+in mainland China.
+
 ## Local Build
 
 ```bash
