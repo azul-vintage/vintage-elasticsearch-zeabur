@@ -5,7 +5,7 @@ service on Zeabur with the IK Chinese analyzer plugin.
 
 ## Files
 
-- `Dockerfile`: builds Elasticsearch `9.3.3` and installs `analysis-ik`
+- `docker/elasticsearch/Dockerfile`: builds Elasticsearch `9.3.3` and installs `analysis-ik`
 - `zeabur.template.yaml`: Zeabur template resource for one-click deployment
 - `.github/workflows/docker-publish.yml`: builds and publishes the image to GHCR
 
@@ -25,7 +25,7 @@ want Zeabur to pull it without extra credentials.
 ## Local Build
 
 ```bash
-docker build -t vintage-elasticsearch-zeabur:test .
+docker build -f docker/elasticsearch/Dockerfile -t vintage-elasticsearch-zeabur:test .
 ```
 
 ## Deploy on Zeabur
@@ -58,3 +58,9 @@ Or import the YAML into a Zeabur project flow that supports template files.
 - Password: defined by `ELASTIC_PASSWORD`
 
 If you expose Elasticsearch to the public internet, do not keep a weak password.
+
+## Repository Layout
+
+The Dockerfile is intentionally not stored at the repository root, so platforms
+that auto-detect root-level Docker projects do not treat this repository as a
+generic app service by default.
