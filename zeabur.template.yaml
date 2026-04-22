@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=https://schema.zeabur.app/template.json
+apiVersion: zeabur.com/v1
+kind: Template
+metadata:
+  name: Vintage Elasticsearch with IK
+spec:
+  description: Single-node Elasticsearch 9.3.3 with IK plugin, password authentication, and Zeabur-safe non-root runtime.
+  icon: https://cdn.zeabur.com/templates/icon/elastic.svg
+  coverImage: https://static-www.elastic.co/v3/assets/bltefdd0b53724fa2ce/bltd2b695348ddc99f3/62fcf82cbcca746334bc3ddc/blog-thumb-release-platform.png
+  tags:
+    - Search
+    - Elasticsearch
+    - IK
+    - Single Node
+  variables:
+    - key: PUBLIC_ELASTICSEARCH_DOMAIN
+      type: DOMAIN
+      name: Elasticsearch Domain
+      description: Optional public domain for Elasticsearch. Leave blank if only internal access is needed.
+  readme: |-
+    # Vintage Elasticsearch with IK
+
+    This template deploys a single-node Elasticsearch 9.3.3 instance with:
+
+    - `analysis-ik` Chinese analyzer plugin
+    - password authentication enabled
+    - non-root runtime (`runAsUserID: 1000`)
+    - persistent data volume
+
+    ## Before Deploying
+
+    1. Push this repository to GitHub.
+    2. Let GitHub Actions publish the image to GHCR.
+    3. Deploy this template after the first successful image build.
+
+    ## Default Runtime Settings
+
+    This template uses Elasticsearch's official Docker-safe env naming:
+
+    - `ES_SETTING_DISCOVERY_TYPE=single-node`
+    - `ES_SETTING_XPACK_SECURITY_ENABLED=true`
+    - `ES_SETTING_XPACK_SECURITY_HTTP_SSL_ENABLED=false`
+    - `ES_SETTING_XPACK_SECURITY_TRANSPORT_SSL_ENABLED=false`
+    - `ES_SETTING_XPACK_SECURITY_AUTOCONFIGURATION_ENABLED=false`
+    - `ES_JAVA_OPTS=-Xms1g -Xmx1g`
+
+    ## Credentials
+
+    - Username: `elastic`
+    - Password: generated from `${PASSWORD}` at deploy time unless you replace `ELASTIC_PASSWORD`
+
+    ## Important Notes
+
+    - Do not run Elasticsearch as root on Zeabur.
+    - Keep `runAsUserID: 1000`.
+    - Persist only `/usr/share/elasticsearch/data`.
+    - Avoid exposing `9200` publicly unless you actually need external access.
+  services:
+    - name: elasticsearch
+      icon: https://cdn.zeabur.com/templates/icon/elastic.svg
+      template: PREBUILT
+      spec:
+        id: elasticsearch
+        source:
+          image: ghcr.io/azul-vintage/vintage-elasticsearch-zeabur:latest
+          runAsUserID: 1000
+        ports:
+          - id: http
+            port: 9200
+            type: HTTP
+        volumes:
+          - id: esdata
+            dir: /usr/share/elasticsearch/data
+        instructions:
+          - title: Elasticsearch Username
+            content: elastic
+          - title: Elasticsearch Password
+            content: ${ELASTIC_PASSWORD}
+        env:
+          ELASTIC_PASSWORD:
+            default: ${PASSWORD}
+            expose: true
+          ES_SETTING_DISCOVERY_TYPE:
+            default: single-node
+          ES_SETTING_XPACK_SECURITY_ENABLED:
+            default: "true"
+          ES_SETTING_XPACK_SECURITY_HTTP_SSL_ENABLED:
+            default: "false"
+          ES_SETTING_XPACK_SECURITY_TRANSPORT_SSL_ENABLED:
+            default: "false"
+          ES_SETTING_XPACK_SECURITY_AUTOCONFIGURATION_ENABLED:
+            default: "false"
+          ES_JAVA_OPTS:
+            default: -Xms1g -Xmx1g
+      domainKey: PUBLIC_ELASTICSEARCH_DOMAIN

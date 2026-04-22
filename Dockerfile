@@ -1,0 +1,18 @@
+ARG ELASTICSEARCH_VERSION=9.3.3
+FROM docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION}
+
+ARG IK_PLUGIN_VERSION=9.3.3
+
+ENV ES_SETTING_DISCOVERY_TYPE=single-node \
+    ES_SETTING_XPACK_SECURITY_ENABLED=true \
+    ES_SETTING_XPACK_SECURITY_HTTP_SSL_ENABLED=false \
+    ES_SETTING_XPACK_SECURITY_TRANSPORT_SSL_ENABLED=false \
+    ES_SETTING_XPACK_SECURITY_AUTOCONFIGURATION_ENABLED=false \
+    ES_JAVA_OPTS="-Xms1g -Xmx1g"
+
+RUN bin/elasticsearch-plugin install --batch \
+    https://get.infini.cloud/elasticsearch/analysis-ik/${IK_PLUGIN_VERSION}
+
+USER 1000:0
+
+EXPOSE 9200 9300
